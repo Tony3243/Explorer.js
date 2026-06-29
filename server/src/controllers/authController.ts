@@ -111,11 +111,11 @@ export async function refresh(req: Request<{}, {}, {
     user_id: string, token: string}>, 
     res: Response<ApiResponse<{accessToken: string}>>) {
     const {token} = req.body;
-    const refreshTokenHash = crypto.createHash('sha256').update(token).digest('hex')
-    if(!refreshTokenHash) {
+    if(typeof token !== 'string' || token.length === 0) {
         console.log("Could not find token");
-        return res.status(500).json({message: "Could not find token"})
+        return res.status(400).json({message: "Could not find token"})
     }
+    const refreshTokenHash = crypto.createHash('sha256').update(token).digest('hex')
     try{
         //we only need the userId to create the new accesstoken
         const tokenExist = await supabase.query<RefreshInput>(`SELECT user_id FROM refresh_tokens WHERE token = $1`, [refreshTokenHash])
@@ -138,12 +138,11 @@ export async function refresh(req: Request<{}, {}, {
 export async function logout(req: Request<{}, {}, {token: string}>, res: Response<{message: string}>) {
     const {token} = req.body;
     //check if hash token exist
-    const refreshTokenHash = crypto.createHash('sha256').update(token).digest('hex')
-    if(!refreshTokenHash) {
+    if(typeof token !== 'string' || token.length === 0) {
         console.log("Token does not exist");
-        return res.status(402).json({message: "Cannot find token"})
+        return res.status(400).json({message: "Cannot find token"})
     }
-
+    const refreshTokenHash = crypto.createHash('sha256').update(token).digest('hex')
     if(!process.env.REFRESH_TOKEN) {
         console.log("Refresh does not exist")
         return res.status(401).json({message: "Refresh does not exist"})
