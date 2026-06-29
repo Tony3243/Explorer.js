@@ -10,7 +10,7 @@ export const connection: AxiosInstance = axios.create({
 
 //handles regular access Tokens
 connection.interceptors.request.use((config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
-    const token:string = localStorage.getItem('accessToken')//goes through local storage to read accessToken value
+    const token:string = localStorage.getItem('refresh')//goes through local storage to read accessToken value
     if(token) {
         config.headers.Authorization = `Bearer ${token}`//change the authorization key's value into our current access token
     }
@@ -25,7 +25,7 @@ connection.interceptors.response.use((response:AxiosResponse<any, any>) => respo
         //checks if they can't find token and request has been retried
         if(error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true //if so mark as true to prevent infinite loop
-            const refresh: string = localStorage.getItem("refreshToken");//if status causes an error, AT expired and retrieve our RT
+            const refresh: string = localStorage.getItem("refresh");//if status causes an error, AT expired and retrieve our RT
     
             if(refresh) {
                 //post our refresh token 
@@ -36,7 +36,7 @@ connection.interceptors.response.use((response:AxiosResponse<any, any>) => respo
                 }
     
                 const newToken: string = response.data.accessToken;//access refresh Token
-                localStorage.setItem("accessToken", newToken);//switch the AT to newToken
+                localStorage.setItem("access", newToken);//switch the AT to newToken
     
                 error.config.headers.Authorization = `Bearer ${newToken}`//reinitializes failed orignal header request with NT
                 return connection(error.config)//re-calls the connection with the newToken

@@ -1,0 +1,60 @@
+* {
+    box-sizing: border-box;
+}
+
+
+
+/* General ttile design for app */
+.title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+/* Register design */
+.allRegister {
+    border-radius: 5px;
+    padding: 5px;
+    display: block;
+}
+
+.registerForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.firstTime {
+    font-size: larger ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+/* design for sign-in*/
+input[type='text'], input[type='email']:required, input[type='password']:required{
+    padding: 12px 10px 5px 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Login design*/
+.allLogin {
+    border-radius: 5px;
+    padding: 5px;
+    display: block;
+}
+.loginTitle {
+    font-size: larger;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
