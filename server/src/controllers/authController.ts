@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import type {JwtPayload} from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 import {variables} from '../config'
 import { supabase } from '../database/supabase'
 import type {Request, Response} from 'express'
@@ -10,7 +11,7 @@ export async function register(req: Request<{}, {}, {
         username: string,
         email: string,
         password: string}>, 
-        res: Response<ApiResponse<UserInput>>) {
+        res: Response<ApiResponse<{access: string, refresh: string}>>) {
     const {username, email, password} = req.body;
 
     if(!username || ! email || !password) {
@@ -32,10 +33,28 @@ export async function register(req: Request<{}, {}, {
 
         const insertQuery = `INSERT INTO users(username, email, password) VALUES($1, $2, $3) RETURNING id, username, email, created_at`
 
-        const insertingUser = await supabase.query<UserInput>(insertQuery, [username, email, hashedPassword])
+        const insertingUser = await supabase.query<UserInput>(insertQuery, [username, email, hashedPassword]);
 
-        console.log("User Successfully created")
-        res.status(201).json(insertingUser.rows[0])
+        const newUser = insertingUser.rows[0]
+        //checks if user exist
+        if(!newUser) {
+            console.log("User doesn't exist")
+            return res.status(404).json({message: "User does not exist"})
+        }
+
+        //when user signs-in, we automatically log-in user with refresh and access token
+        const accessToken: string = jwt.sign({id: newUser.id, email: newUser.email}, variables.jwtToken, {expiresIn: '1h'});
+        const refreshToken: string = jwt.sign({id: newUser.id, email: newUser.email}, variables.refreshToken, {expiresIn: "7d"});
+
+        //we hashed our refreshToken to to keep authentication safe from potential attackers
+        const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex')
+        const tokenInsertResult = await supabase.query(`INSERT INTO refresh_tokens(user_id, token) VALUES($1, $2) RETURNING id, user_id, token, created_at`, [newUser.id, refreshTokenHash]);
+        
+        if (tokenInsertResult.rows.length === 0) {
+            console.error("Failed to store refresh token");
+            return res.status(500).json({message: "Failed to complete login"})
+        }
+        res.status(200).json({access: accessToken, refresh: refreshToken})
     } catch(err) {
         console.log("error in inserting user: ", err)
         res.status(500).json({message: "User not created"})
@@ -75,7 +94,8 @@ export async function login(req: Request<{}, {}, {
         const accessToken: string = jwt.sign({id: specificUser.id, email: specificUser.email}, variables.jwtToken, {expiresIn: '1h'});
         const refreshToken: string = jwt.sign({id: specificUser.id, email: specificUser.email}, variables.refreshToken, {expiresIn: "7d"});
 
-        const tokenInsertResult = await supabase.query(`INSERT INTO refresh_tokens(user_id, token) VALUES($1, $2) RETURNING id, user_id, token, created_at`, [specificUser.id, refreshToken]);
+        const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex')
+        const tokenInsertResult = await supabase.query(`INSERT INTO refresh_tokens(user_id, token) VALUES($1, $2) RETURNING id, user_id, token, created_at`, [specificUser.id, refreshTokenHash]);
         
         if (tokenInsertResult.rows.length === 0) {
             console.error("Failed to store refresh token");
@@ -91,13 +111,14 @@ export async function refresh(req: Request<{}, {}, {
     user_id: string, token: string}>, 
     res: Response<ApiResponse<{accessToken: string}>>) {
     const {token} = req.body;
-    if(!token) {
+    const refreshTokenHash = crypto.createHash('sha256').update(token).digest('hex')
+    if(!refreshTokenHash) {
         console.log("Could not find token");
         return res.status(500).json({message: "Could not find token"})
     }
     try{
         //we only need the userId to create the new accesstoken
-        const tokenExist = await supabase.query<RefreshInput>(`SELECT user_id FROM refresh_tokens WHERE token = $1`, [token])
+        const tokenExist = await supabase.query<RefreshInput>(`SELECT user_id FROM refresh_tokens WHERE token = $1`, [refreshTokenHash])
         if(tokenExist.rows.length === 0) {
             console.log("couldn't find matching token");
             return res.status(401).json({message: "Couldn't find token"})
@@ -116,8 +137,9 @@ export async function refresh(req: Request<{}, {}, {
 
 export async function logout(req: Request<{}, {}, {token: string}>, res: Response<{message: string}>) {
     const {token} = req.body;
-    //check if token exist
-    if(!token) {
+    //check if hash token exist
+    const refreshTokenHash = crypto.createHash('sha256').update(token).digest('hex')
+    if(!refreshTokenHash) {
         console.log("Token does not exist");
         return res.status(402).json({message: "Cannot find token"})
     }
@@ -129,7 +151,7 @@ export async function logout(req: Request<{}, {}, {token: string}>, res: Respons
     try {
         //accessing user_id by verifying the token so that it can give us the id
         const decoding = jwt.verify(token, process.env.REFRESH_TOKEN) as JwtPayload
-        const deletingToken = await supabase.query(`DELETE FROM refresh_tokens WHERE token = $1 and user_id = $2`, [token, decoding.id]);
+        const deletingToken = await supabase.query(`DELETE FROM refresh_tokens WHERE token = $1 and user_id = $2`, [refreshTokenHash, decoding.id]);
         if(deletingToken.rowCount === 0) {
             console.log("Couldn't delete token");
             return res.status(500).json({message: "Couldn't delete token"})

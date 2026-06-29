@@ -1,9 +1,15 @@
 import express from 'express'
+import cors from 'cors'
 import type { Express}  from 'express'
 import { authRoute } from './routes/authRoute';
 import { favoriteRoute } from './routes/favoriteRoute'
 
 const app: Express = express();
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}))
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))//handles data with special characters (password, email)
