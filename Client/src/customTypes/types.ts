@@ -11,16 +11,23 @@ export type Status<T> =
     | {status: 'success', data: T}
     | {status: 'error', error: Error}
 
-export type RegisterProps<T> = {
+export type RegisterProps = {
     username?: string,
     setUsername?: (value: string) => void
     email: string,
     setEmail: (value: string) => void,
     password: string, 
-    setPassword: (value: string) => void
+    setPassword: (value: string) => void,
     authStatus: Status<Tokens>
     setAuthStatus: (status: Status<Tokens>) => void
     setIsLogin: (value: boolean) => void
+}
+
+export type allFavoritesProps = {
+    repoStatus:Status<UserRepoData[]>, 
+    setRepoStatus: (status: Status<UserRepoData[]>) => void,
+    repos: UserRepoData[],
+    setRepos: (repos: UserRepoData[]) => void
 }
 
 export type Tokens = {access: string, refresh: string}

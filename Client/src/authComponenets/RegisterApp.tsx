@@ -1,12 +1,12 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'//navigates to different pages with reloading
-import type {Status, RegisterProps, Tokens} from '../customTypes/types.ts'
+import type {RegisterProps} from '../customTypes/types.ts'
 import {signUp} from '../api/auth.ts'
 import { isAxiosError } from 'axios'
 
 export default function RegisterApp({
     username, setUsername, email, setEmail, password, setPassword, authStatus, setAuthStatus, setIsLogin
-}: RegisterProps<Status<Tokens>>){
+}: RegisterProps){
 
     const navigating = useNavigate()//refrence function to navigate
     const handleRegister = async(e: React.SubmitEvent<HTMLFormElement>) => {

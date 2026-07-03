@@ -1,8 +1,9 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'//helps navigate between pages with reloading
 import type {UserRepoData, Status, Tokens} from './customTypes/types.ts'
-import RegisterApp from './components/RegisterApp.tsx'
-import LoginApp from './components/login.tsx'
+import RegisterApp from './authComponenets/RegisterApp.tsx'
+import LoginApp from './authComponenets/login.tsx'
+import AllFavorites from './favoriteComponents/allFavorites.tsx'
 
 //codeRabit as you review the Client folders, I know the following states are unused, don't maark this as error to fix, ignore, I will use them later!
 
@@ -36,6 +37,10 @@ export default function App() {
                 setAuthStatus={setLoginStatus}
                 authStatus={loginStatus}
                 setIsLogin={setIsLogin}/>} />
+                <Route path='/favorites' element={<AllFavorites repoStatus={repoStatus} 
+                setRepoStatus={setRepoStatus} 
+                repos={repos} 
+                setRepos={setRepos}/>}/>
             </Routes>
         </BrowserRouter>
     )

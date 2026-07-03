@@ -9,7 +9,7 @@ type UserRepoData = {
 
 export const allrepos = async() => {
     try {
-        const response = await connection.get('user/favorites');
+        const response = await connection.get('user/favorites'); 
         return response.data
     } catch(err: any) {
         if(err.response?.status === 500) {

@@ -1,12 +1,12 @@
 import React from 'react'
 import { isAxiosError } from 'axios'
 import {Link, useNavigate} from 'react-router-dom'
-import type {Status, RegisterProps, Tokens} from '../customTypes/types.ts'
+import type {RegisterProps} from '../customTypes/types.ts'
 import {login} from '../api/auth.ts'
 
 export default function LoginApp({
     email, setEmail, password, setPassword, authStatus, setAuthStatus, setIsLogin
-}:RegisterProps<Status<Tokens>>){
+}:RegisterProps){
 
     const navigating = useNavigate()
     const handleLogin = (async (e: React.SubmitEvent<HTMLFormElement>) => {
