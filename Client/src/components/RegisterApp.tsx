@@ -2,9 +2,10 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'//navigates to different pages with reloading
 import type {Status, RegisterProps, Tokens} from '../customTypes/types.ts'
 import {signUp} from '../api/auth.ts'
+import { isAxiosError } from 'axios'
 
 export default function RegisterApp({
-    username, setUsername, email, setEmail, password, setPassword, setAuthStatus, setIsLogin
+    username, setUsername, email, setEmail, password, setPassword, authStatus, setAuthStatus, setIsLogin
 }: RegisterProps<Status<Tokens>>){
 
     const navigating = useNavigate()//refrence function to navigate
@@ -15,7 +16,7 @@ export default function RegisterApp({
         try {
             const data = await signUp(username, email, password)
 
-            localStorage.setItem("accessToken", data.access)
+            localStorage.setItem("access", data.access)
             localStorage.setItem('refresh', data.refresh)
 
             setAuthStatus({status: 'success', data: data});
@@ -32,6 +33,11 @@ export default function RegisterApp({
     return (
         <div className="allRegister">
             <p className="firstTime">Sign-In</p>
+            {authStatus.status === 'error' ? 
+            <div>
+                <strong className='alert'>{isAxiosError(authStatus.error) && authStatus.error.response?.status === 401 ?
+                'Something went wrong.Try agian later' : null}</strong>
+            </div>: null}
             <form onSubmit={handleRegister} className='registerForm' action="submit-regitser" method="post">
                 <div className="input">
                     <label htmlFor="username">Username:</label>
@@ -46,7 +52,7 @@ export default function RegisterApp({
                     <input type="password" id="password" name="password" required value={password}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}></input>
                     
-                    <Link to='/favorites'>Sign-in</Link>
+                    <button type='submit'>Sign-Up</button>
                 </div>
                 <div>
                     <Link to='/login'>Already have an account? Login</Link>

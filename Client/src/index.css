@@ -58,3 +58,9 @@ input[type='text'], input[type='email']:required, input[type='password']:require
     flex-direction: column;
     align-items: center
 }
+
+.alert {
+    color: red;
+    display: flex;
+    justify-content: center;
+}

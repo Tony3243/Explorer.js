@@ -22,4 +22,8 @@ app.use('/api/auth', authRoute)
 //http://localhost:8000/api/user/favorites
 app.use('/api/user', favoriteRoute)
 
-app.listen(PORT, ():void => console.log(`Listening on port ${PORT}`))
+const server = app.listen(PORT, ():void => {
+    const info = server.address();
+
+    console.log(`Listening on port ${PORT}`)
+})
