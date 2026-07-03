@@ -19,8 +19,6 @@ export default function LoginApp({
             localStorage.setItem('access', data.access)
             localStorage.setItem('refresh', data.refresh)
 
-            console.log(data)
-
             setAuthStatus({status: "success", data: data})
             setIsLogin(true)
 
@@ -35,7 +33,7 @@ export default function LoginApp({
             <p className='loginTitle'>Login-In</p>
             {authStatus.status === 'error' ? <div>
                 <strong className='alert'>{isAxiosError(authStatus.error) && authStatus.error.response?.status === 401 ?
-                'Wrong email/password' : 'Something went wrong.Try agian later'}</strong>
+                'Something went wrong. Try again later' : 'Wrong email/password'}</strong>
             </div>: null}
             <form className='loginForm'onSubmit={handleLogin}>
                 <label htmlFor="email">Email:</label>

@@ -18,8 +18,8 @@ export type RegisterProps<T> = {
     setEmail: (value: string) => void,
     password: string, 
     setPassword: (value: string) => void
-    authStatus: Status<Tokens>//setting this optional doesn;t provide RegisterApp errors
-    setAuthStatus: (status: T) => void
+    authStatus: Status<Tokens>
+    setAuthStatus: (status: Status<Tokens>) => void
     setIsLogin: (value: boolean) => void
 }
 

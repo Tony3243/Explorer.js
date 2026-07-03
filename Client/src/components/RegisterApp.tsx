@@ -33,11 +33,11 @@ export default function RegisterApp({
     return (
         <div className="allRegister">
             <p className="firstTime">Sign-In</p>
-            {authStatus.status === 'error' ? 
+            {authStatus.status === 'error' && 
             <div>
                 <strong className='alert'>{isAxiosError(authStatus.error) && authStatus.error.response?.status === 401 ?
-                'Something went wrong.Try agian later' : null}</strong>
-            </div>: null}
+                'Something went wrong. Try again later' : 'Credentials are invalid. Try again'}</strong>
+            </div>}
             <form onSubmit={handleRegister} className='registerForm' action="submit-regitser" method="post">
                 <div className="input">
                     <label htmlFor="username">Username:</label>
