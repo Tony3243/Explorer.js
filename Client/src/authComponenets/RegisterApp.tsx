@@ -22,7 +22,6 @@ export default function RegisterApp({
             setAuthStatus({status: 'success', data: data});
 
             setIsLogin(true);
-            console.log("data:", data)
 
             navigating('/favorites')//once successful registration, user navigates to this route
         } catch(err) {
@@ -36,7 +35,7 @@ export default function RegisterApp({
             {authStatus.status === 'error' && 
             <div>
                 <strong className='alert'>{isAxiosError(authStatus.error) && authStatus.error.response?.status === 401 ?
-                'Something went wrong. Try again later' : 'Credentials are invalid. Try again'}</strong>
+                'Credentials are invalid. Try again' : 'Something went wrong. Try again later'}</strong>
             </div>}
             <form onSubmit={handleRegister} className='registerForm' action="submit-regitser" method="post">
                 <div className="input">

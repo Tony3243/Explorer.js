@@ -33,7 +33,7 @@ export default function LoginApp({
             <p className='loginTitle'>Login-In</p>
             {authStatus.status === 'error' ? <div>
                 <strong className='alert'>{isAxiosError(authStatus.error) && authStatus.error.response?.status === 401 ?
-                'Something went wrong. Try again later' : 'Wrong email/password'}</strong>
+                'Wrong email/password' : 'Something went wrong. Try again later'}</strong>
             </div>: null}
             <form className='loginForm'onSubmit={handleLogin}>
                 <label htmlFor="email">Email:</label>

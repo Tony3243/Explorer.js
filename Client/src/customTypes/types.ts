@@ -1,4 +1,5 @@
 export type UserRepoData = {
+    repo_id: string
     repo_name: string,
     repo_url: string,
     description: string,
@@ -23,11 +24,12 @@ export type RegisterProps = {
     setIsLogin: (value: boolean) => void
 }
 
-export type allFavoritesProps = {
+export type AllFavoritesProps = {
     repoStatus:Status<UserRepoData[]>, 
     setRepoStatus: (status: Status<UserRepoData[]>) => void,
     repos: UserRepoData[],
-    setRepos: (repos: UserRepoData[]) => void
+    setIsLogin: (value: boolean) => void
+    setLoginStatus: (value: Status<Tokens>) => void
 }
 
 export type Tokens = {access: string, refresh: string}

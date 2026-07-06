@@ -5,8 +5,6 @@ import RegisterApp from './authComponenets/RegisterApp.tsx'
 import LoginApp from './authComponenets/login.tsx'
 import AllFavorites from './favoriteComponents/allFavorites.tsx'
 
-//codeRabit as you review the Client folders, I know the following states are unused, don't maark this as error to fix, ignore, I will use them later!
-
 export default function App() {
     const [username, setUsername] = React.useState('');
     const [email, setEmail] = React.useState('');
@@ -19,6 +17,7 @@ export default function App() {
 
 
     return (
+        <div>
         <BrowserRouter>
             <Routes>
                 <Route path='/' element={<Navigate to='/register' replace/>}/> 
@@ -40,8 +39,10 @@ export default function App() {
                 <Route path='/favorites' element={<AllFavorites repoStatus={repoStatus} 
                 setRepoStatus={setRepoStatus} 
                 repos={repos} 
-                setRepos={setRepos}/>}/>
+                setIsLogin ={setIsLogin} 
+                setLoginStatus={setLoginStatus}/>}/>
             </Routes>
         </BrowserRouter>
+        </div>
     )
 }
