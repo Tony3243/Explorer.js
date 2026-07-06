@@ -69,7 +69,6 @@ export const search: RequestHandler<{username: string}, ApiResponse<Repos[]>> = 
     const {username} = req.params;
 
     try{
-        console.log("hi");
         const response = await fetch(`https://api.github.com/users/${username}/repos`)
         if(!response.ok) {
             console.log("username does not exist")
@@ -78,6 +77,7 @@ export const search: RequestHandler<{username: string}, ApiResponse<Repos[]>> = 
         const final = await response.json();
 
         const filteredRepos = final.map((column: any) => ({
+            repo_username: column.username,
             repo_name: column.name,
             repo_url: column.html_url,
             description: column.description,

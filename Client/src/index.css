@@ -64,3 +64,10 @@ input[type='text'], input[type='email']:required, input[type='password']:require
     display: flex;
     justify-content: center;
 }
+
+/* Logout button*/
+
+.logout {
+    padding: 5px;
+    margin-left: 1100px
+}

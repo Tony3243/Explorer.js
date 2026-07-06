@@ -43,9 +43,9 @@ export const deleteRepo = async(id: number) => {
     }
 }
 
-export const search = async(username: string) => {
+export const search = async(loginUsername: string) => {
     try {
-        const response = await connection.get(`user/search/${username}`);
+        const response = await connection.get(`user/search/${loginUsername}`);
         return response.data
     } catch(err: any) {
         if(err.response?.status === 500) {

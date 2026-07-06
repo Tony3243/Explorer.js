@@ -5,7 +5,7 @@ import {signUp} from '../api/auth.ts'
 import { isAxiosError } from 'axios'
 
 export default function RegisterApp({
-    username, setUsername, email, setEmail, password, setPassword, authStatus, setAuthStatus, setIsLogin
+    loginUsername, setLoginUsername, email, setEmail, password, setPassword, authStatus, setAuthStatus, setIsLogin
 }: RegisterProps){
 
     const navigating = useNavigate()//refrence function to navigate
@@ -14,7 +14,7 @@ export default function RegisterApp({
 
         setAuthStatus({status: 'loading'});
         try {
-            const data = await signUp(username, email, password)
+            const data = await signUp(loginUsername, email, password)
 
             localStorage.setItem("access", data.access)
             localStorage.setItem('refresh', data.refresh)
@@ -39,10 +39,10 @@ export default function RegisterApp({
             </div>}
             <form onSubmit={handleRegister} className='registerForm' action="submit-regitser" method="post">
                 <div className="input">
-                    <label htmlFor="username">Username:</label>
-                    <input type="text" id="username" name="username" value={username} 
+                    <label htmlFor="Username">Username:</label>
+                    <input type="text" id="loginUsername" name="loginUsername" value={loginUsername} 
                     //onChange changes on every key stroke
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)} required></input>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLoginUsername(e.target.value)} required></input>
                     <label htmlFor="email">Email:</label>
                     <input type="email" id="email" name="email" required value={email} 
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}></input>

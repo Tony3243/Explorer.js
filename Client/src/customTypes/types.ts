@@ -13,8 +13,8 @@ export type Status<T> =
     | {status: 'error', error: Error}
 
 export type RegisterProps = {
-    username?: string,
-    setUsername?: (value: string) => void
+    loginUsername?: string,
+    setLoginUsername?: (value: string) => void
     email: string,
     setEmail: (value: string) => void,
     password: string, 
@@ -28,8 +28,12 @@ export type AllFavoritesProps = {
     repoStatus:Status<UserRepoData[]>, 
     setRepoStatus: (status: Status<UserRepoData[]>) => void,
     repos: UserRepoData[],
-    setIsLogin: (value: boolean) => void
-    setLoginStatus: (value: Status<Tokens>) => void
+    setIsLogin: (value: boolean) => void,
+    setLoginStatus: (value: Status<Tokens>) => void,
+    githubUsername: string,
+    setGithubUsername: (value: string) => void
 }
 
 export type Tokens = {access: string, refresh: string}
+
+export type SearchUsername = {status: 'success', username: string}

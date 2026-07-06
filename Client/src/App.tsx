@@ -6,7 +6,7 @@ import LoginApp from './authComponenets/login.tsx'
 import AllFavorites from './favoriteComponents/allFavorites.tsx'
 
 export default function App() {
-    const [username, setUsername] = React.useState('');
+    const [loginloginUsername, setLoginUsername] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('')
     const [registerStatus, setRegisterStatus] = React.useState<Status<Tokens>>({status: 'idle'})
@@ -14,6 +14,7 @@ export default function App() {
     const [isLogin, setIsLogin] = React.useState<boolean>(false)
     const [repoStatus, setRepoStatus] = React.useState<Status<UserRepoData[]>>({status: 'idle'})
     const [repos, setRepos] = React.useState<UserRepoData[]>([])
+    const [githubUsername, setGithubUsername] = React.useState<string>()
 
 
     return (
@@ -21,8 +22,8 @@ export default function App() {
         <BrowserRouter>
             <Routes>
                 <Route path='/' element={<Navigate to='/register' replace/>}/> 
-                <Route path='/register' element={<RegisterApp username={username} 
-                setUsername={setUsername} 
+                <Route path='/register' element={<RegisterApp loginUsername={loginloginUsername} 
+                setLoginUsername={setLoginUsername} 
                 email={email} setEmail={setEmail} 
                 password={password} 
                 setPassword={setPassword}
@@ -40,7 +41,9 @@ export default function App() {
                 setRepoStatus={setRepoStatus} 
                 repos={repos} 
                 setIsLogin ={setIsLogin} 
-                setLoginStatus={setLoginStatus}/>}/>
+                setLoginStatus={setLoginStatus}
+                githubUsername={githubUsername}
+                setGithubUsername={setGithubUsername}/>}/>
             </Routes>
         </BrowserRouter>
         </div>
