@@ -13,6 +13,7 @@ connection.interceptors.request.use((config: InternalAxiosRequestConfig): Intern
     const token:string = localStorage.getItem('access')//goes through local storage to read accessToken value
     if(token) {
         config.headers.Authorization = `Bearer ${token}`//change the authorization key's value into our current access token
+        
     }
     return config
 })
@@ -22,26 +23,31 @@ connection.interceptors.response.use((response:AxiosResponse<any, any>) => respo
     async(error: AxiosError) => {
         const  originalRequest = error.config as any;
 
-        //checks if they can't find token and request has been retried
-        if(error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true //if so mark as true to prevent infinite loop
-            const refresh: string = localStorage.getItem("refresh");//if status causes an error, AT expired and retrieve our RT
-    
-            if(refresh) {
-                //post our refresh token 
-                const response = await connection.post('auth/refresh', refresh);
+        //prevent infinite loop
+        if(originalRequest) {
+            return Promise.reject(error)
+        }
+        const refresh: string | null = localStorage.getItem('refresh')
 
-                if(error.config) {
-                    return Promise.reject(error)//return if refreshToken silently fails
-                }
-    
-                const newToken: string = response.data.accessToken;//access refresh Token
-                localStorage.setItem("access", newToken);//switch the AT to newToken
-    
-                error.config.headers.Authorization = `Bearer ${newToken}`//reinitializes failed orignal header request with NT
-                return connection(error.config)//re-calls the connection with the newToken
+        //401 + refresh token === expired refreshTokenOkay.
+        if(error.response?.status === 401 && refresh) {
+            originalRequest._retry = true;
+            try {
+                const response = await connection.post('auth/refresh', {token: refresh})
+                const newToken: string = response.data.accessToken;
+
+                localStorage.setItem('access', newToken);
+
+                //update header and retry connection
+                originalRequest.headers.Authorization = `Bearer ${newToken}`
+                return connection(originalRequest)
+            } catch(err) {
+                //if resfresh failed remove access and refresh and move to login
+                localStorage.removeItem('access');
+                localStorage.removeItem('refresh')
+                return Promise.reject(err)
             }
         }
-        return Promise.reject(error)//return if refreshToken silently fails
+        return Promise.reject(error)
     }
 )

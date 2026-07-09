@@ -25,7 +25,7 @@ export default function RegisterApp({
 
             navigating('/favorites')//once successful registration, user navigates to this route
         } catch(err) {
-            setAuthStatus({status: 'error', error: err as Error});
+            setAuthStatus({status: 'error', error: err});
             console.log(err);
         }
     }
@@ -34,12 +34,12 @@ export default function RegisterApp({
             <p className="firstTime">Sign-In</p>
             {authStatus.status === 'error' && 
             <div>
-                <strong className='alert'>{isAxiosError(authStatus.error) && authStatus.error.response?.status === 401 ?
+                <strong className='alert'>{Number(authStatus.error.response?.status) === 401 ?
                 'Credentials are invalid. Try again' : 'Something went wrong. Try again later'}</strong>
             </div>}
             <form onSubmit={handleRegister} className='registerForm' action="submit-regitser" method="post">
                 <div className="input">
-                    <label htmlFor="Username">Username:</label>
+                    <label htmlFor="loginUsername">Username:</label>
                     <input type="text" id="loginUsername" name="loginUsername" value={loginUsername} 
                     //onChange changes on every key stroke
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLoginUsername(e.target.value)} required></input>

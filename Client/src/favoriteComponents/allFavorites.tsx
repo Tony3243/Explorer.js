@@ -1,10 +1,10 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import type {AllFavoritesProps, SearchUsername} from '../customTypes/types'
-import { allrepos, search } from '../api/favorites'
+import type {AllFavoritesProps} from '../customTypes/types'
+import { allrepos, search, deleteRepo } from '../api/favorites'
 import { logout } from '../api/auth'
 
-export default function AllFavorites({repoStatus, setRepoStatus, repos, setIsLogin, setLoginStatus, githubUsername, setGithubUsername}:AllFavoritesProps):React.ReactNode {
+export default function AllFavorites({repoStatus, setRepoStatus, repos, setIsLogin, setLoginStatus, githubUsername, setGithubUsername, isDelete, setIsDelete, deletedId, setDeletedId}:AllFavoritesProps):React.ReactNode {
     const navigating = useNavigate();
 
     //loads all the user favorite repos once logged in
@@ -30,7 +30,7 @@ export default function AllFavorites({repoStatus, setRepoStatus, repos, setIsLog
         setLoginStatus({status: 'loading'})
 
         try{
-            const refreshToken: string = localStorage.getItem('refresh')
+            const refreshToken = localStorage.getItem('refresh')
 
             if(!refreshToken) {
                 localStorage.removeItem('refresh')//removing the refresh token
@@ -50,7 +50,7 @@ export default function AllFavorites({repoStatus, setRepoStatus, repos, setIsLog
         }
     })
 
-    const handleSearch = (async(e) => {
+    const handleSearch = (async(e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         setRepoStatus({status: 'loading'})
@@ -58,13 +58,26 @@ export default function AllFavorites({repoStatus, setRepoStatus, repos, setIsLog
             const data = await search(githubUsername)
             console.log(data)
             setRepoStatus({status: 'success', data: data})
-            navigating(`/search/:${githubUsername}`)//navigating to the searched usernames repos
+            navigating(`/search/${githubUsername}`)//navigating to the searched usernames repos
 
         }catch(err) {
             console.log('Search handler error:', err)
             setRepoStatus({status: 'error', error: err})
         }
     })
+
+    //deleting favorite repos
+    const deleteHandler = (async(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault();
+            setRepoStatus({status: 'loading'})
+            try {
+                const data = await deleteRepo(deletedId)
+                setIsDelete(true)
+            }catch(err) {
+                console.log('Delete Handler error:', err)
+                setRepoStatus({status: 'error', error: err})
+            }
+        })
 
     if(repoStatus.status === 'idle') return null
 
@@ -77,19 +90,19 @@ export default function AllFavorites({repoStatus, setRepoStatus, repos, setIsLog
     )
 
     if(repoStatus.status === 'success') return (
-        <div>
+        <div className='adjust-logout'>
             <div>
                 <input type='text' id='githubusername' name='githubUsername' placeholder='Github username' value={githubUsername}
                 onChange={((e) => setGithubUsername(e.target.value))}></input>
-                <button onClick={handleSearch}type='submit'>search</button>
+                <button onClick={handleSearch}type='button'>search</button> 
             </div>
-            <button className='logout' onClick={logoutHandler} type='submit'>Logout</button>
+            <button className='logout' onClick={logoutHandler} type='button'>Logout</button>
             {repoStatus.data.map((repo) => (
             <div key={repo.repo_id}>
-                <p>{repo.repo_name}</p>
+                <p>Names: {repo.repo_name}</p>
                 <a href={repo.repo_url}>View Repo</a>
-                <p>{repo.description}</p>
-                <p>{repo.rating}</p>
+                <p>Description: {repo.description}</p>
+                <p>Rating: {repo.rating}</p>
             </div>
         ))}
         </div>

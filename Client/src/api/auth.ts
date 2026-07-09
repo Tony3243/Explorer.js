@@ -15,6 +15,7 @@ export const signUp = async (username: string, email: string, password: string) 
             console.log(err);
             throw new Error("Api register technical error")
         }
+        throw err//throws if conditional !== 500
     }
 }
 
@@ -27,6 +28,7 @@ export const login = async (email: string, password: string) => {
             console.log(err)
             throw new Error("Api login technical error")
         }
+        throw err
     }
 }
 
@@ -39,5 +41,6 @@ export const logout = async (token: string) => {
             console.log(err)
             throw new Error("Api logout technical error")
         }
+        throw err
     }
 }

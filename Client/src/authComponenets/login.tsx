@@ -24,17 +24,21 @@ export default function LoginApp({
 
             navigating('/favorites')//once successful login, user navigates to this route
         } catch(err) {
-            console.log(err);
+            console.log('err:', err) 
+            console.log('isAxiosError:', isAxiosError(err))
+            console.log('response:', isAxiosError(err) && err.response)
+            console.log('status:', isAxiosError(err) && err.response?.status)
             setAuthStatus({status: 'error', error: err})
         }
     })
     return (
         <div className='allLogin'>
             <p className='loginTitle'>Login-In</p>
-            {authStatus.status === 'error' ? <div>
-                <strong className='alert'>{isAxiosError(authStatus.error) && authStatus.error.response?.status === 401 ?
+            {authStatus.status === 'error' && 
+            <div>
+                <strong className='alert'>{Number(authStatus.error.response?.status) === 401 ?//401 means unauthorized, wrong email/password
                 'Wrong email/password' : 'Something went wrong. Try again later'}</strong>
-            </div>: null}
+            </div>}
             <form className='loginForm'onSubmit={handleLogin}>
                 <label htmlFor="email">Email:</label>
                 <input type="email" id="email" name="email" value={email} required

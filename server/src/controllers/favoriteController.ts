@@ -77,7 +77,6 @@ export const search: RequestHandler<{username: string}, ApiResponse<Repos[]>> = 
         const final = await response.json();
 
         const filteredRepos = final.map((column: any) => ({
-            repo_username: column.username,
             repo_name: column.name,
             repo_url: column.html_url,
             description: column.description,

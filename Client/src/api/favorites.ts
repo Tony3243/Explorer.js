@@ -16,6 +16,7 @@ export const allrepos = async() => {
             console.log(err)
             throw new Error('Api to get all repos suffered technical error')
         }
+        throw err
     }
 }
 
@@ -28,6 +29,7 @@ export const addRepo = async(repoData: UserRepoData) => {
             console.log(err)
             throw new Error('Api to add new repo suffered technical error')
         }
+        throw err
     }
 }
 
@@ -40,6 +42,7 @@ export const deleteRepo = async(id: number) => {
             console.log(err)
             throw new Error('Api to delete repo suffered technical error')
         }
+        throw err
     }
 }
 
@@ -52,5 +55,6 @@ export const search = async(loginUsername: string) => {
             console.log(err)
             throw new Error('Api to search user suffered technical error')
         }
+        throw err
     }
 }

@@ -67,7 +67,23 @@ input[type='text'], input[type='email']:required, input[type='password']:require
 
 /* Logout button*/
 
+.adjust-logout {
+    display: flex;
+}
+
 .logout {
     padding: 5px;
-    margin-left: 1100px
+    margin-left: auto;
+}
+
+/* Searched username repos*/
+
+.username-data {
+    display: inline-flex;
+    margin: auto;
+}
+
+.other-repos {
+    border: solid;
+    border-radius: 15px;
 }
