@@ -24,7 +24,7 @@ connection.interceptors.response.use((response:AxiosResponse<any, any>) => respo
         const  originalRequest = error.config as any;
 
         //prevent infinite loop
-        if(originalRequest) {
+        if(originalRequest?._retry) {
             return Promise.reject(error)
         }
         const refresh: string | null = localStorage.getItem('refresh')

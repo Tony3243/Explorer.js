@@ -1,4 +1,5 @@
 import type { AxiosError } from "axios"
+import type {Dispatch, SetStateAction } from 'react'
 
 export type UserRepoData = {
     repo_id: string
@@ -36,17 +37,18 @@ export type AllFavoritesProps = {
     setGithubUsername: (value: string) => void,
     isDelete: boolean,
     setIsDelete: (value: boolean) => void,
-    deletedId: null,
-    setDeletedId: (value: null) => void,
+    deletedId: null | number,
+    setDeletedId: (value: null | number) => void,
 }
 
 export type UsernameReposProps = {
     repoStatus: Status<UserRepoData[]>
-    setRepoStatus: (status: Status<UserRepoData[]>) => void,
+    setRepoStatus: Dispatch<SetStateAction<Status<UserRepoData[]>>>
     isAdded: boolean
     setIsAdded: (value: boolean) => void,
-    addedId: null,
-    setAddedId: (value: null) => void,
+    addedId: string | null,
+    setAddedId: (value: string | null) => void,
+    setRepos: Dispatch<SetStateAction<UserRepoData[]>>
 }
 
 export type Tokens = {access: string, refresh: string}

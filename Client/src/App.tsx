@@ -15,11 +15,11 @@ export default function App() {
     const [isLogin, setIsLogin] = React.useState<boolean>(false)
     const [repoStatus, setRepoStatus] = React.useState<Status<UserRepoData[]>>({status: 'idle'})
     const [repos, setRepos] = React.useState<UserRepoData[]>([])
-    const [githubUsername, setGithubUsername] = React.useState<string>()
+    const [githubUsername, setGithubUsername] = React.useState<string>('')
     const [isDelete, setIsDelete] = React.useState<boolean>(false);
-    const [deletedId, setDeletedId] = React.useState(null)
+    const [deletedId, setDeletedId] = React.useState<number | null>(null)
     const [isAdded, setIsAdded] = React.useState<boolean>(false)
-    const [addedId, setAddedId] = React.useState(null)
+    const [addedId, setAddedId] = React.useState<string | null>(null)
 
 
     return (
@@ -59,7 +59,8 @@ export default function App() {
                 setIsAdded={setIsAdded}
                 addedId={addedId}
                 setAddedId={setAddedId}
-                setRepoStatus={setRepoStatus}/>}/>
+                setRepoStatus={setRepoStatus}
+                setRepos={setRepos}/>}/>
             </Routes>
         </BrowserRouter>
         </div>

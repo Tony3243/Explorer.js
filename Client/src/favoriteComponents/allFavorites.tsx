@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import type {AllFavoritesProps} from '../customTypes/types'
+import type {AllFavoritesProps, UserRepoData} from '../customTypes/types'
 import { allrepos, search, deleteRepo } from '../api/favorites'
 import { logout } from '../api/auth'
 
@@ -50,6 +50,7 @@ export default function AllFavorites({repoStatus, setRepoStatus, repos, setIsLog
         }
     })
 
+    //searches username and their repos
     const handleSearch = (async(e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
@@ -97,14 +98,18 @@ export default function AllFavorites({repoStatus, setRepoStatus, repos, setIsLog
                 <button onClick={handleSearch}type='button'>search</button> 
             </div>
             <button className='logout' onClick={logoutHandler} type='button'>Logout</button>
-            {repoStatus.data.map((repo) => (
-            <div key={repo.repo_id}>
-                <p>Names: {repo.repo_name}</p>
-                <a href={repo.repo_url}>View Repo</a>
-                <p>Description: {repo.description}</p>
-                <p>Rating: {repo.rating}</p>
-            </div>
-        ))}
+            <ul>
+                {repoStatus.data.map((repo: UserRepoData) => (
+                    <li key={repo.repo_id}>
+                        <div>
+                        <p>Name: {repo.repo_name}</p>
+                        <a href={repo.repo_url}>View Repo</a>
+                        <p>Description: {repo.description}</p>
+                        <p>Rating: {repo.rating}</p>
+                        </div>
+                    </li>
+                ))}
+            </ul>
         </div>
     )
 }

@@ -33,7 +33,7 @@ export default function LoginApp({
     })
     return (
         <div className='allLogin'>
-            <p className='loginTitle'>Login-In</p>
+            <p className='loginTitle'>Login</p>
             {authStatus.status === 'error' && 
             <div>
                 <strong className='alert'>{Number(authStatus.error.response?.status) === 401 ?//401 means unauthorized, wrong email/password
