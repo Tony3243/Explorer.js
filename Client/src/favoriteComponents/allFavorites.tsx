@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type {AllFavoritesProps, UserRepoData} from '../customTypes/types'
 import { allrepos, search, deleteRepo } from '../api/favorites'
 import { logout } from '../api/auth'
+import { isAxiosError } from 'axios'
 
-export default function AllFavorites({repoStatus, setRepoStatus, setIsLogin, setLoginStatus, githubUsername, setGithubUsername, isDelete, setIsDelete, deletedId, setDeletedId, repos}:AllFavoritesProps):React.ReactNode {
+export default function AllFavorites({
+    setRepos, repoStatus, setRepoStatus, setIsLogin, setLoginStatus, setGithubUsername, githubUsername, isDelete, setIsDelete, deletedId, setDeletedId, repos, userNotFound, setuserNotFound
+}:AllFavoritesProps):React.ReactNode {
     const navigating = useNavigate();
+    const searchModal = useRef<HTMLDialogElement>(null)
 
     //loads all the user favorite repos once logged in
     React.useEffect(() => {
@@ -15,13 +19,14 @@ export default function AllFavorites({repoStatus, setRepoStatus, setIsLogin, set
             try {
                 const data = await allrepos();
                 setRepoStatus({status: 'success', data: data})
+                setRepos(data)
             } catch(err) {
                 console.log('Allfavorites error:', err)
                 setRepoStatus({status: "error", error: err})
             }
         })
         fetchRepos()
-    }, [repos])
+    }, [])
     
     //handles user logging out
     const logoutHandler = (async(e: React.MouseEvent<HTMLButtonElement>) => {
@@ -60,19 +65,33 @@ export default function AllFavorites({repoStatus, setRepoStatus, setIsLogin, set
             console.log(data)
             setRepoStatus({status: 'success', data: data})
             navigating(`/search/${githubUsername}`)//navigating to the searched usernames repos
-
         }catch(err) {
-            console.log('Search handler error:', err)
-            setRepoStatus({status: 'error', error: err})
+            if(isAxiosError(err) && err.response?.status === 404) {
+                setuserNotFound(true);//username not found
+                setRepoStatus({status: 'success', data: repos})//still show repos eventhough username not found
+            } else {
+                setRepoStatus({status: 'error', error: err})//anything else is real technical errors
+            }
         }
     })
+
+    React.useEffect(() => {
+        if(userNotFound && searchModal.current){
+            searchModal.current.showModal();
+            const timer = setTimeout(() => {
+                searchModal.current?.close()
+                setuserNotFound(false)//resets after timer
+            }, 3000)
+            return () => clearTimeout(timer)
+        }
+    }, [userNotFound])//references current typed username
 
     //deleting favorite repos
     const deleteHandler = (async(e: React.MouseEvent<HTMLButtonElement>) => {
             e.preventDefault();
             setRepoStatus({status: 'loading'})
             try {
-                const data = await deleteRepo(deletedId)
+                await deleteRepo(deletedId)
                 setIsDelete(true)
             }catch(err) {
                 console.log('Delete Handler error:', err)
@@ -85,7 +104,6 @@ export default function AllFavorites({repoStatus, setRepoStatus, setIsLogin, set
     if(repoStatus.status === 'loading') return (
         <p>Loading Favorites...</p>
     )
-
     if(repoStatus.status === 'error') return (
         <p>Error: {repoStatus.error.message}</p>
     )
@@ -110,6 +128,9 @@ export default function AllFavorites({repoStatus, setRepoStatus, setIsLogin, set
                     </li>
                 ))}
             </ul>
+            <dialog ref={searchModal}>
+                <p>Username not found</p>
+            </dialog>
         </div>
     )
 }

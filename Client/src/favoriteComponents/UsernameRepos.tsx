@@ -4,16 +4,15 @@ import { addRepo } from '../api/favorites'
 import type { UsernameReposProps, UserRepoData} from '../customTypes/types'
 
 export default function UsernameRepos({
-    isAdded, setIsAdded, addedId, setAddedId, setRepos, repoStatus, setAddedStatus}: UsernameReposProps) {
+    isAdded, setIsAdded, addedId, setAddedId, setRepos, repoStatus, setAddedStatus, githubUsername}: UsernameReposProps) {
 
-        const addedRef = React.useRef(null)//modal to show repo added to favorites
+        const addedRef = React.useRef<HTMLDialogElement>(null)//modal to show repo added to favorites
 
         React.useEffect(() => {
             if(isAdded && addedRef.current) {//if added a favorite
                 addedRef.current.showModal();//open modal notification
                 const timer = setTimeout(() => {//after timer hits, close the ref if addReff.current exist
                     addedRef.current?.close()
-                    setIsAdded(false)
                 }, 3000)
                 return () => clearTimeout(timer)
             }
@@ -36,6 +35,7 @@ export default function UsernameRepos({
         })
     return (
         <div className='username-data'>
+            <h1>{githubUsername}</h1>
             <ul>
                 {repoStatus.status === 'success' && repoStatus.data.map((repo:UserRepoData) => (
                     <li key={repo.repo_id}>

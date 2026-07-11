@@ -31,7 +31,7 @@ export const addFavorite: RequestHandler<{}, ApiResponse<Client[]>>= async(req, 
     try {
         const adding = await supabase.query<Client[]>(`INSERT INTO favorite_repos(user_id, repo_id, repo_name, repo_url, description, rating) 
             VALUES($1, $2, $3, $4, $5, $6) 
-            RETURNING repo_name, repo_url, description, rating`, 
+            RETURNING repo_id, repo_name, repo_url, description, rating`, 
             [userId, repo_id, repo_name, repo_url, description, rating]);
         if (adding.rows && adding.rows.length > 0) {
             res.status(201).json(adding.rows[0])

@@ -28,6 +28,7 @@ export type RegisterProps = {
 }
 
 export type AllFavoritesProps = {
+    setRepos: (value: UserRepoData[]) => void,
     repoStatus:Status<UserRepoData[]>, 
     setRepoStatus: (status: Status<UserRepoData[]>) => void,
     repos: UserRepoData[],
@@ -39,6 +40,8 @@ export type AllFavoritesProps = {
     setIsDelete: (value: boolean) => void,
     deletedId: null | number,
     setDeletedId: (value: null | number) => void,
+    userNotFound: boolean,
+    setuserNotFound: (value: boolean) => void
 }
 
 export type UsernameReposProps = {
@@ -50,6 +53,7 @@ export type UsernameReposProps = {
     addedId: number | null,
     setAddedId: (value: number | null) => void,
     setRepos: Dispatch<SetStateAction<UserRepoData[]>>
+    githubUsername: string,
 }
 
 export type Tokens = {access: string, refresh: string}

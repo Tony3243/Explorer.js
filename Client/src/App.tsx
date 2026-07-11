@@ -21,6 +21,7 @@ export default function App() {
     const [isAdded, setIsAdded] = React.useState<boolean>(false)
     const [addedId, setAddedId] = React.useState<number | null>(null)
     const [addedStatus, setAddedStatus] = React.useState<Status<UserRepoData>>({status: 'idle'})
+    const [userNotFound, setuserNotFound] = React.useState<boolean>(false)
 
 
     return (
@@ -44,7 +45,10 @@ export default function App() {
                 authStatus={loginStatus}
                 setIsLogin={setIsLogin}/>} />
                 <Route path='/favorites' element={<AllFavorites repoStatus={repoStatus}
+                userNotFound={userNotFound}
+                setuserNotFound={setuserNotFound}
                 setDeletedId={setDeletedId}
+                setRepos={setRepos}
                 deletedId={deletedId}
                 setIsDelete={setIsDelete} 
                 isDelete={isDelete}
@@ -55,6 +59,7 @@ export default function App() {
                 githubUsername={githubUsername}
                 setGithubUsername={setGithubUsername}/>}/>
                 <Route path='/search/:username' element={<UsernameRepos
+                githubUsername={githubUsername}
                 repoStatus={repoStatus}
                 isAdded={isAdded}
                 setIsAdded={setIsAdded}
