@@ -4,21 +4,34 @@ import { addRepo } from '../api/favorites'
 import type { UsernameReposProps, UserRepoData} from '../customTypes/types'
 
 export default function UsernameRepos({
-    setRepoStatus, repoStatus, isAdded, setIsAdded, addedId, setAddedId, setRepos}: UsernameReposProps) {
+    isAdded, setIsAdded, addedId, setAddedId, setRepos, repoStatus, setAddedStatus}: UsernameReposProps) {
+
+        const addedRef = React.useRef(null)//modal to show repo added to favorites
+
+        React.useEffect(() => {
+            if(isAdded && addedRef.current) {//if added a favorite
+                addedRef.current.showModal();//open modal notification
+                const timer = setTimeout(() => {//after timer hits, close the ref if addReff.current exist
+                    addedRef.current?.close()
+                    setIsAdded(false)
+                }, 3000)
+                return () => clearTimeout(timer)
+            }
+        }, [isAdded])
 
         const addHandler = (async(repo: UserRepoData) => {
-            setRepoStatus({status: 'loading'})
+            setAddedStatus({status: 'loading'})
 
             try {
-                const data = await addRepo(repo)
-                console.log('data: ', data)
+                await addRepo(repo);
+                setAddedStatus({status: 'success', data: repo})
 
-                setRepos((prevRepos):UserRepoData[] => [...prevRepos, data]);
+                setRepos((prevRepos):UserRepoData[] => [...prevRepos, repo]);
                 setAddedId(repo.repo_id)
                 setIsAdded(true)
             }catch(err) {
                 console.log('Add handler error:', err);
-                setRepoStatus({status: 'error', error: err})
+                setAddedStatus({status: 'error', error: err})
             }
         })
     return (
@@ -32,11 +45,13 @@ export default function UsernameRepos({
                         <p>Description: {repo.description}</p>
                         <p>Rating: {repo.rating}</p>
                         <button onClick={() => addHandler(repo)}>Add To favorites</button>
-                        {isAdded && <dialog>Repo Added!</dialog>}
                         </div>
                     </li>
                 ))}
             </ul>
+            <dialog ref={addedRef}> 
+                <p>Repo added to favorites!</p> {/* if added inside the mapping, we will get the same amount of modals per repo*/}
+            </dialog>
         </div>
     )
 }

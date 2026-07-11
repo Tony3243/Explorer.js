@@ -4,7 +4,7 @@ import type {AllFavoritesProps, UserRepoData} from '../customTypes/types'
 import { allrepos, search, deleteRepo } from '../api/favorites'
 import { logout } from '../api/auth'
 
-export default function AllFavorites({repoStatus, setRepoStatus, repos, setIsLogin, setLoginStatus, githubUsername, setGithubUsername, isDelete, setIsDelete, deletedId, setDeletedId}:AllFavoritesProps):React.ReactNode {
+export default function AllFavorites({repoStatus, setRepoStatus, setIsLogin, setLoginStatus, githubUsername, setGithubUsername, isDelete, setIsDelete, deletedId, setDeletedId, repos}:AllFavoritesProps):React.ReactNode {
     const navigating = useNavigate();
 
     //loads all the user favorite repos once logged in
@@ -99,7 +99,7 @@ export default function AllFavorites({repoStatus, setRepoStatus, repos, setIsLog
             </div>
             <button className='logout' onClick={logoutHandler} type='button'>Logout</button>
             <ul>
-                {repoStatus.data.map((repo: UserRepoData) => (
+                {repos.map((repo: UserRepoData) => (
                     <li key={repo.repo_id}>
                         <div>
                         <p>Name: {repo.repo_name}</p>

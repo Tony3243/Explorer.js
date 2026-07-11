@@ -21,7 +21,10 @@ ApiResponse<Client[]>//res.body,{}//req.body
 export const addFavorite: RequestHandler<{}, ApiResponse<Client[]>>= async(req, res) => {
     const userId = res.locals.user.id
     const {repo_id, repo_name, repo_url, description, rating} = req.body;
-    if(!repo_id || !repo_name || !repo_url || !description || !rating) {
+    console.log('repo_id:', repo_id)    // ← is this undefined?
+    console.log('repo_name:', repo_name) // ← is this undefined?
+    console.log('repo_url:', repo_url)   // ← is this undefined
+    if(!repo_id || !repo_name || !repo_url) {
         console.log("Missing Fields");
         return res.status(400).json({message: "Missing Fields"})
     }

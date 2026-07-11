@@ -19,7 +19,8 @@ export default function App() {
     const [isDelete, setIsDelete] = React.useState<boolean>(false);
     const [deletedId, setDeletedId] = React.useState<number | null>(null)
     const [isAdded, setIsAdded] = React.useState<boolean>(false)
-    const [addedId, setAddedId] = React.useState<string | null>(null)
+    const [addedId, setAddedId] = React.useState<number | null>(null)
+    const [addedStatus, setAddedStatus] = React.useState<Status<UserRepoData>>({status: 'idle'})
 
 
     return (
@@ -59,8 +60,9 @@ export default function App() {
                 setIsAdded={setIsAdded}
                 addedId={addedId}
                 setAddedId={setAddedId}
-                setRepoStatus={setRepoStatus}
-                setRepos={setRepos}/>}/>
+                setRepos={setRepos}
+                addedStatus={addedStatus}
+                setAddedStatus={setAddedStatus}/>}/>
             </Routes>
         </BrowserRouter>
         </div>

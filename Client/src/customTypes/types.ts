@@ -2,7 +2,7 @@ import type { AxiosError } from "axios"
 import type {Dispatch, SetStateAction } from 'react'
 
 export type UserRepoData = {
-    repo_id: string
+    repo_id: number
     repo_name: string,
     repo_url: string,
     description: string,
@@ -43,11 +43,12 @@ export type AllFavoritesProps = {
 
 export type UsernameReposProps = {
     repoStatus: Status<UserRepoData[]>
-    setRepoStatus: Dispatch<SetStateAction<Status<UserRepoData[]>>>
+    addedStatus: Status<UserRepoData>
+    setAddedStatus: Dispatch<SetStateAction<Status<UserRepoData>>>
     isAdded: boolean
     setIsAdded: (value: boolean) => void,
-    addedId: string | null,
-    setAddedId: (value: string | null) => void,
+    addedId: number | null,
+    setAddedId: (value: number | null) => void,
     setRepos: Dispatch<SetStateAction<UserRepoData[]>>
 }
 

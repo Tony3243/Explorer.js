@@ -1,7 +1,7 @@
 import { connection } from "./axios";
 
 type UserRepoData = {
-    repo_id: string
+    repo_id: number
     repo_name: string,
     repo_url: string,
     description: string,
@@ -23,7 +23,8 @@ export const allrepos = async() => {
 
 export const addRepo = async(repoData: UserRepoData) => {
     try {
-        const response = await connection.post<UserRepoData>('user/favorites', {repoData});
+        console.log('sending to backend:', repoData) 
+        const response = await connection.post<UserRepoData>('user/favorites', repoData);
         return response.data
     } catch (err: any) {
         if(err.response?.status === 500) {
