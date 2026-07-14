@@ -45,6 +45,10 @@ export type AllFavoritesProps = {
 }
 
 export type UsernameReposProps = {
+    setRepoStatus: (status: Status<UserRepoData[]>) => void,
+    isDuplicate: boolean
+    setIsDuplicate: (value: boolean) => void
+    repos: UserRepoData[]
     repoStatus: Status<UserRepoData[]>
     addedStatus: Status<UserRepoData>
     setAddedStatus: Dispatch<SetStateAction<Status<UserRepoData>>>

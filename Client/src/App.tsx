@@ -22,6 +22,7 @@ export default function App() {
     const [addedId, setAddedId] = React.useState<number | null>(null)
     const [addedStatus, setAddedStatus] = React.useState<Status<UserRepoData>>({status: 'idle'})
     const [userNotFound, setuserNotFound] = React.useState<boolean>(false)
+    const [isDuplicate, setIsDuplicate] = React.useState<boolean>(false)
 
 
     return (
@@ -59,6 +60,10 @@ export default function App() {
                 githubUsername={githubUsername}
                 setGithubUsername={setGithubUsername}/>}/>
                 <Route path='/search/:username' element={<UsernameRepos
+                setRepoStatus={setRepoStatus}
+                isDuplicate={isDuplicate}
+                setIsDuplicate={setIsDuplicate}
+                repos={repos}
                 githubUsername={githubUsername}
                 repoStatus={repoStatus}
                 isAdded={isAdded}

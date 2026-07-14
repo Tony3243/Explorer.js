@@ -10,6 +10,8 @@ export default function AllFavorites({
 }:AllFavoritesProps):React.ReactNode {
     const navigating = useNavigate();
     const searchModal = useRef<HTMLDialogElement>(null)
+    const deleteModal = useRef<HTMLDialogElement>(null)
+    const idDeleteModal = useRef<null | number>(null) //ussed to store deletedID in an async function(redners on every function call)
 
     //loads all the user favorite repos once logged in
     React.useEffect(() => {
@@ -18,6 +20,7 @@ export default function AllFavorites({
 
             try {
                 const data = await allrepos();
+                console.log('favorites payload:', data)
                 setRepoStatus({status: 'success', data: data})
                 setRepos(data)
             } catch(err) {
@@ -62,7 +65,6 @@ export default function AllFavorites({
         setRepoStatus({status: 'loading'})
         try {  
             const data = await search(githubUsername)
-            console.log(data)
             setRepoStatus({status: 'success', data: data})
             navigating(`/search/${githubUsername}`)//navigating to the searched usernames repos
         }catch(err) {
@@ -70,11 +72,12 @@ export default function AllFavorites({
                 setuserNotFound(true);//username not found
                 setRepoStatus({status: 'success', data: repos})//still show repos eventhough username not found
             } else {
-                setRepoStatus({status: 'error', error: err})//anything else is real technical errors
+                setRepoStatus({status: 'error', error: err})//anything else shown
             }
         }
     })
 
+    //modal for unknown username
     React.useEffect(() => {
         if(userNotFound && searchModal.current){
             searchModal.current.showModal();
@@ -87,17 +90,24 @@ export default function AllFavorites({
     }, [userNotFound])//references current typed username
 
     //deleting favorite repos
-    const deleteHandler = (async(e: React.MouseEvent<HTMLButtonElement>) => {
-            e.preventDefault();
-            setRepoStatus({status: 'loading'})
+    const deleteHandler = (async( id: number) => {
+            setIsDelete(true) //start loading
+            console.log('id: ', id)
             try {
-                await deleteRepo(deletedId)
-                setIsDelete(true)
+                await deleteRepo(id)
+                setRepos(repos.filter((repo) => repo.repo_id !== id)) //filter out the repos that are not equal to the deleted Id'd
+                setIsDelete(false)//reset
+                deleteModal.current?.close()
             }catch(err) {
                 console.log('Delete Handler error:', err)
-                setRepoStatus({status: 'error', error: err})
+                setIsDelete(false)
+                if(isAxiosError(err) && err.response?.status === 500) {
+                    setRepoStatus({status: 'success', data: repos})
+                } else {
+                    setRepoStatus({status: 'error', error: err})
+                }
             }
-        })
+    })
 
     if(repoStatus.status === 'idle') return null
 
@@ -124,9 +134,15 @@ export default function AllFavorites({
                         <a href={repo.repo_url}>View Repo</a>
                         <p>Description: {repo.description}</p>
                         <p>Rating: {repo.rating}</p>
+                        <button onClick={() => {idDeleteModal.current = repo.repo_id; setDeletedId(idDeleteModal.current); deleteModal.current?.showModal()}}>Delete</button>
                         </div>
                     </li>
                 ))}
+                <dialog ref={deleteModal}>
+                    <h6>Are you sure you want to delete?</h6>
+                    <button type='button' onClick={() => deleteHandler(idDeleteModal.current!)} disabled={isDelete}>{isDelete ? "Deleting..." : 'Yes'}</button>
+                    <button type='button' onClick={() => deleteModal.current.close()}>No</button>
+                </dialog>
             </ul>
             <dialog ref={searchModal}>
                 <p>Username not found</p>

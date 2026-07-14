@@ -8,7 +8,7 @@ ApiResponse<Client[]>//res.body,{}//req.body
     const userId: string = res.locals.user.id
     try {
         const allData = await supabase.query<Client>(`
-            SELECT repo_name, repo_url, description, rating 
+            SELECT repo_id, repo_name, repo_url, description, rating 
             FROM favorite_repos 
             WHERE user_id = $1`, [userId]);
         res.status(200).json(allData.rows)//if user has empty [], means user doesn't have favorites yet, therefore valid status
@@ -46,6 +46,7 @@ export const addFavorite: RequestHandler<{}, ApiResponse<Client[]>>= async(req, 
 export const deleteFavorite: RequestHandler<{id:string}, ApiResponse<Client>> = async(req, res) => {
     const repoId: string = req.params.id//repo that is being deleted
     const userId: string = res.locals.user.id//who is deleting it
+    console.log(repoId)
 
     if(!repoId) {
         console.log("Missing repo param in url");
@@ -53,8 +54,8 @@ export const deleteFavorite: RequestHandler<{id:string}, ApiResponse<Client>> = 
     }
 
     try {
-        const deleting = await supabase.query(`DELETE FROM favorite_repos WHERE repo_id = $1 and user_id = $2`, [repoId, userId]);
-        if(!deleting.rows || deleting.rows.length === 0) {
+        const deleting = await supabase.query(`DELETE FROM favorite_repos WHERE repo_id = $1 and user_id = $2 RETURNING *`, [repoId, userId]);
+        if(deleting.rowCount == 0) {
             console.log("Favorite not found or already deleted");
             return res.status(404).json({message: "Favorite not found or already deleted"})
         }

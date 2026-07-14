@@ -12,6 +12,7 @@ export type Repos = {
 
 // What client receives back
 export type Client = {
+    repo_id: number
     repo_name: string,
     repo_url: string,
     description: string,

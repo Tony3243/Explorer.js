@@ -11,6 +11,7 @@ export const connection: AxiosInstance = axios.create({
 //handles regular access Tokens
 connection.interceptors.request.use((config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const token:string = localStorage.getItem('access')//goes through local storage to read accessToken value
+    console.log(token)
     if(token) {
         config.headers.Authorization = `Bearer ${token}`//change the authorization key's value into our current access token
         
