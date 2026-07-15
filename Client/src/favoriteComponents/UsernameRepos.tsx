@@ -36,13 +36,13 @@ export default function UsernameRepos({
         }, [isDuplicate])
 
         const addHandler = (async(repo: UserRepoData) => {
-            setAddedStatus({status: 'loading'})
             try {
                 const alreadyAdded = repos.some((r: UserRepoData) => r.repo_id === repo.repo_id); //check for duplicates
                 if(alreadyAdded) {
                     setIsDuplicate(true)
                     return
                 }
+                setAddedStatus({status: 'loading'})
                 await addRepo(repo);
                 setAddedStatus({status: 'success', data: repo})
 
@@ -51,25 +51,31 @@ export default function UsernameRepos({
                 setIsAdded(true)
             }catch(err) {
                 console.log('Add handler error:', err);
-                if(isAxiosError(err) && err.response?.status === 500) {
-                    setRepoStatus({status: 'success', data: repos})
-                } else {
-                    setRepoStatus({status: 'error', error: err})
-                }
+                setAddedStatus({status: 'error', error: err})
             }
         })
     return (
-        <div className='username-data'>
-            <h1>{githubUsername}</h1>
-            <ul>
+        <main className='page username-data'>
+            <div className='page-head'>
+                <h2 className='page-title'><span className='accent'>@{githubUsername}</span>'s repos</h2>
+                <button className='btn-ghost' type='button' onClick={() => backToFavorites('/favorites')}>← Back to favorites</button>
+            </div>
+            <ul className='repo-grid'>
+                {repoStatus.status === 'success' && repoStatus.data.length === 0 && (
+                    <li className='empty'>This user has no public repositories.</li>
+                )}
                 {repoStatus.status === 'success' && repoStatus.data.map((repo:UserRepoData) => (
-                    <li key={repo.repo_id}>
-                        <div>
-                        <p>Name: {repo.repo_name}</p>
-                        <a href={repo.repo_url}>View Repo</a>
-                        <p>Description: {repo.description}</p>
-                        <p>Rating: {repo.rating}</p>
-                        <button onClick={() => addHandler(repo)}>Add To favorites</button>
+                    <li className='repo-card' key={repo.repo_id}>
+                        <div className='repo-card-body'>
+                            <div className='repo-top'>
+                                <h3 className='repo-name'>{repo.repo_name}</h3>
+                                <span className='rating-badge'>★ {repo.rating}</span>
+                            </div>
+                            <p className='repo-desc'>{repo.description || 'No description provided.'}</p>
+                        </div>
+                        <div className='repo-actions'>
+                            <a className='btn btn-ghost' href={repo.repo_url} target='_blank' rel='noreferrer'>View Repo</a>
+                            <button className='btn-primary' onClick={() => addHandler(repo)}>+ Add to favorites</button>
                         </div>
                     </li>
                 ))}
@@ -77,10 +83,9 @@ export default function UsernameRepos({
             {isDuplicate && <dialog ref={alreadyAddedRef}>
                 <p>Repo already added</p>
             </dialog>}
-            {isAdded && <dialog ref={addedRef}> 
+            {isAdded && <dialog ref={addedRef}>
                 <p>Repo added to favorites!</p> {/* if added inside the mapping, we will get the same amount of modals per repo*/}
             </dialog>}
-            <button type='button' onClick={() => backToFavorites('/favorites')}>Back</button>
-        </div>
+        </main>
     )
 }

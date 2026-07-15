@@ -54,7 +54,12 @@ export const deleteFavorite: RequestHandler<{id:string}, ApiResponse<Client>> = 
     }
 
     try {
-        const deleting = await supabase.query(`DELETE FROM favorite_repos WHERE repo_id = $1 and user_id = $2 RETURNING *`, [repoId, userId]);
+        const deleting = await supabase.query(
+          `DELETE FROM favorite_repos
+           WHERE repo_id = $1 AND user_id = $2
+           RETURNING repo_id, repo_name, repo_url, description, rating`,
+          [repoId, userId],
+        );
         if(deleting.rowCount == 0) {
             console.log("Favorite not found or already deleted");
             return res.status(404).json({message: "Favorite not found or already deleted"})

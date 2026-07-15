@@ -32,27 +32,30 @@ export default function LoginApp({
         }
     })
     return (
-        <div className='allLogin'>
-            <p className='loginTitle'>Login</p>
-            {authStatus.status === 'error' && 
-            <div>
+        <div className='auth-page'>
+            <div className='allLogin'>
+                <p className='loginTitle'>Welcome back</p>
+                <p className='auth-subtitle'>Log in to see your saved repositories.</p>
+                {authStatus.status === 'error' &&
                 <strong className='alert'>{Number(authStatus.error.response?.status) === 401 ?//401 means unauthorized, wrong email/password
-                'Wrong email/password' : 'Something went wrong. Try again later'}</strong>
-            </div>}
-            <form className='loginForm'onSubmit={handleLogin}>
-                <label htmlFor="email">Email:</label>
-                <input type="email" id="email" name="email" value={email} required
-                onChange={(e) => setEmail(e.target.value)}></input>
-
-                <label htmlFor='password'>Password:</label>
-                <input type="password" id="password" name='password' value={password} required
-                onChange={(e) => setPassword(e.target.value)}></input>
-
-                <button type='submit'>LogIn</button>
-                <div>
-                    <Link to='/register'>Don't have an account? Sign-Up</Link>
-                </div>
-            </form>
+                    'Wrong email/password' : 'Something went wrong. Try again later'}</strong>}
+                <form className='loginForm' onSubmit={handleLogin}>
+                    <div className="field">
+                        <label htmlFor="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" value={email} required
+                        onChange={(e) => setEmail(e.target.value)}></input>
+                    </div>
+                    <div className="field">
+                        <label htmlFor='password'>Password</label>
+                        <input type="password" id="password" name='password' placeholder="••••••••" value={password} required
+                        onChange={(e) => setPassword(e.target.value)}></input>
+                    </div>
+                    <button type='submit'>Log In</button>
+                    <div className="auth-switch">
+                        <Link to='/register'>Don't have an account? Sign-Up</Link>
+                    </div>
+                </form>
+            </div>
         </div>
     )
 }

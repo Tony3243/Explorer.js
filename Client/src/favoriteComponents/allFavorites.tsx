@@ -101,52 +101,70 @@ export default function AllFavorites({
             }catch(err) {
                 console.log('Delete Handler error:', err)
                 setIsDelete(false)
-                if(isAxiosError(err) && err.response?.status === 500) {
-                    setRepoStatus({status: 'success', data: repos})
-                } else {
-                    setRepoStatus({status: 'error', error: err})
-                }
+                setRepoStatus({status: 'error', error: err})
             }
     })
 
     if(repoStatus.status === 'idle') return null
 
     if(repoStatus.status === 'loading') return (
-        <p>Loading Favorites...</p>
+        <div className='state'>
+            <div className='spinner' />
+            <p>Loading your favorites…</p>
+        </div>
     )
     if(repoStatus.status === 'error') return (
-        <p>Error: {repoStatus.error.message}</p>
+        <div className='state error'>
+            <p>Something went wrong: {repoStatus.error.message}</p>
+        </div>
     )
 
     if(repoStatus.status === 'success') return (
-        <div className='adjust-logout'>
-            <div>
-                <input type='text' id='githubusername' name='githubUsername' placeholder='Github username' value={githubUsername}
-                onChange={((e) => setGithubUsername(e.target.value))}></input>
-                <button onClick={handleSearch}type='button'>search</button> 
+        <main className='page'>
+            <div className='toolbar'>
+                <div className='search-group'>
+                    <input type='text' id='githubusername' name='githubUsername' placeholder='Search a GitHub username…' value={githubUsername}
+                    onChange={((e) => setGithubUsername(e.target.value))}></input>
+                    <button className='btn-primary' onClick={handleSearch} type='button'>Search</button>
+                </div>
+                <button className='logout btn-ghost' onClick={logoutHandler} type='button'>Logout</button>
             </div>
-            <button className='logout' onClick={logoutHandler} type='button'>Logout</button>
-            <ul>
+
+            <div className='page-head'>
+                <h2 className='page-title'>Your <span className='accent'>favorite</span> repos</h2>
+                <span className='count-pill'>{repos.length} saved</span>
+            </div>
+
+            <ul className='repo-grid'>
+                {repos.length === 0 && (
+                    <li className='empty'>No favorites yet — search a username above to start adding repos.</li>
+                )}
                 {repos.map((repo: UserRepoData) => (
-                    <li key={repo.repo_id}>
-                        <div>
-                        <p>Name: {repo.repo_name}</p>
-                        <a href={repo.repo_url}>View Repo</a>
-                        <p>Description: {repo.description}</p>
-                        <p>Rating: {repo.rating}</p>
-                        <button onClick={() => {idDeleteModal.current = repo.repo_id; setDeletedId(idDeleteModal.current); deleteModal.current?.showModal()}}>Delete</button>
+                    <li className='repo-card' key={repo.repo_id}>
+                        <div className='repo-card-body'>
+                            <div className='repo-top'>
+                                <h3 className='repo-name'>{repo.repo_name}</h3>
+                                <span className='rating-badge'>★ {repo.rating}</span>
+                            </div>
+                            <p className='repo-desc'>{repo.description || 'No description provided.'}</p>
+                        </div>
+                        <div className='repo-actions'>
+                            <a className='btn btn-ghost' href={repo.repo_url} target='_blank' rel='noreferrer'>View Repo</a>
+                            <button className='btn-danger' onClick={() => {idDeleteModal.current = repo.repo_id; setDeletedId(idDeleteModal.current); deleteModal.current?.showModal()}}>Delete</button>
                         </div>
                     </li>
                 ))}
                 <dialog ref={deleteModal}>
                     <h6>Are you sure you want to delete?</h6>
-                    <button type='button' onClick={() => deleteHandler(idDeleteModal.current!)} disabled={isDelete}>{isDelete ? "Deleting..." : 'Yes'}</button>
-                    <button type='button' onClick={() => deleteModal.current.close()}>No</button>
+                    <div className='modal-actions'>
+                        <button className='btn-danger' type='button' onClick={() => deleteHandler(idDeleteModal.current!)} disabled={isDelete}>{isDelete ? "Deleting…" : 'Yes, delete'}</button>
+                        <button className='btn-ghost' type='button' onClick={() => deleteModal.current.close()}>Cancel</button>
+                    </div>
                 </dialog>
             </ul>
             <dialog ref={searchModal}>
                 <p>Username not found</p>
             </dialog>
-        </div>
+        </main>
     )
 }
